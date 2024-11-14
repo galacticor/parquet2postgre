@@ -1,0 +1,33 @@
+[Unit]
+Description=Airflow scheduler daemon
+After=network.target postgresql.service mysql.service redis.service
+Wants=postgresql.service mysql.service redis.service
+
+[Service]
+# Replace 'user' with your actual username
+User=user
+Group=user
+Type=simple
+Environment="AIRFLOW_HOME=/home/user/airflow"
+Environment="PATH=/home/user/.local/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=/home/user/.local/bin/airflow scheduler
+Restart=always
+RestartSec=5
+PrivateTmp=true
+
+# Ensure proper environment loading for user-installed Python packages
+StandardError=journal
+StandardOutput=journal
+SyslogIdentifier=airflow-scheduler
+
+# Add these for better security with user-level installation
+ProtectHome=read-only
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+
+[Install]
+WantedBy=multi-user.target
